@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "types/types.proto";
+
+package txpool;
+
+option go_package = "./txpool;txpool";
+
+service Sealing {
+  rpc SealBlock(SealRequest) returns (SealResponse);
+}
+
+message SealRequest {
+  BlockParameters params = 1;
+  bool fillWithMempool = 2;
+  bool trace = 3;
+  repeated bytes rlpTxs = 16;
+}
+
+message BlockParameters {
+  types.H256 parentHash = 1;
+  types.H160 coinbase = 2;
+  uint64 timestamp = 3;
+  uint64 gasLimit = 4;
+  types.H256 random = 5;
+  bytes extraData = 6;
+}
+
+message ExcludedTransaction {
+  types.H256 hash = 1;
+  string reason = 2;
+}
+
+message SealResponse {
+  bytes profit = 1;
+  types.ExecutionPayload payload = 2;
+
+  repeated ExcludedTransaction excludedTransactions = 16;
+  repeated bytes receipts = 17;
+  repeated string traces = 18;
+}
+
